@@ -8,198 +8,68 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-  :root{
-    --bg: #EEEDE7;
-    --surface: #FFFFFF;
-    --surface-2: #F7F6F1;
-    --ink: #1B2420;
-    --ink-soft: #5B655F;
-    --primary: #0F5C4E;
-    --primary-dark: #0B4A3F;
-    --primary-tint: #E4EFEC;
-    --accent: #E8A33D;
-    --accent-dark: #C4841F;
-    --danger: #C0453A;
-    --line: #DEDCD2;
-    --radius: 14px;
-  }
+  :root{ --bg: #EEEDE7; --surface: #FFFFFF; --surface-2: #F7F6F1; --ink: #1B2420; --ink-soft: #5B655F; --primary: #0F5C4E; --primary-dark: #0B4A3F; --primary-tint: #E4EFEC; --accent: #E8A33D; --accent-dark: #C4841F; --danger: #C0453A; --line: #DEDCD2; --radius: 14px; }
   *{ box-sizing: border-box; }
-  html,body{
-    margin:0; padding:0; background: var(--bg); color: var(--ink);
-    font-family: 'Manrope', system-ui, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-  }
-  body{
-    display:flex; justify-content:center;
-  }
-  .app{
-    width:100%; max-width:480px; min-height:100vh;
-    background: var(--bg);
-    display:flex; flex-direction:column;
-    position:relative;
-  }
-  /* ---------- Header ---------- */
-  header{
-    padding:18px 18px 14px;
-    display:flex; align-items:center; justify-content:space-between;
-    border-bottom:1px solid var(--line);
-  }
+  html,body{ margin:0; padding:0; background: var(--bg); color: var(--ink); font-family: 'Manrope', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body{ display:flex; justify-content:center; }
+  .app{ width:100%; max-width:480px; min-height:100vh; background: var(--bg); display:flex; flex-direction:column; position:relative; }
+  header{ padding:18px 18px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
   .brand{ display:flex; flex-direction:column; gap:2px; }
-  .brand h1{
-    margin:0; font-size:20px; font-weight:800; letter-spacing:-0.01em;
-  }
+  .brand h1{ margin:0; font-size:20px; font-weight:800; letter-spacing:-0.01em; }
   .brand span{ font-size:12.5px; color: var(--ink-soft); font-weight:500; }
-  .status-dot{
-    display:flex; align-items:center; gap:6px;
-    font-size:11.5px; color: var(--ink-soft); font-weight:700;
-  }
-  .status-dot i{
-    width:8px; height:8px; border-radius:50%; background:#B9B6A8; display:block;
-  }
+  .status-dot{ display:flex; align-items:center; gap:6px; font-size:11.5px; color: var(--ink-soft); font-weight:700; }
+  .status-dot i{ width:8px; height:8px; border-radius:50%; background:#B9B6A8; display:block; }
   .status-dot.on i{ background: var(--primary); box-shadow:0 0 0 3px var(--primary-tint); }
   .status-dot.off i{ background: var(--danger); }
-
-  /* ---------- Scanner ---------- */
   .scan-section{ padding: 16px 18px 4px; }
-  .scan-frame{
-    position:relative;
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    overflow:hidden;
-    aspect-ratio: 1 / 1;
-    border:1px solid var(--line);
-  }
+  .scan-frame{ position:relative; background: var(--surface-2); border-radius: var(--radius); overflow:hidden; aspect-ratio: 1 / 1; border:1px solid var(--line); }
   #reader{ width:100%; height:100%; }
   #reader video{ object-fit:cover; width:100% !important; height:100% !important; }
-
-  .scan-placeholder{
-    position:absolute; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:10px; text-align:center; padding:24px;
-    color: var(--ink-soft); font-size:13px;
-  }
+  .scan-placeholder{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:24px; color: var(--ink-soft); font-size:13px; }
   .scan-placeholder svg{ opacity:.55; }
-
-  .corner{
-    position:absolute; width:34px; height:34px; border-color: var(--accent);
-    pointer-events:none; z-index:5;
-  }
+  .corner{ position:absolute; width:34px; height:34px; border-color: var(--accent); pointer-events:none; z-index:5; }
   .corner.tl{ top:12px; left:12px; border-top:3px solid; border-left:3px solid; border-radius:6px 0 0 0; }
   .corner.tr{ top:12px; right:12px; border-top:3px solid; border-right:3px solid; border-radius:0 6px 0 0; }
   .corner.bl{ bottom:12px; left:12px; border-bottom:3px solid; border-left:3px solid; border-radius:0 0 0 6px; }
   .corner.br{ bottom:12px; right:12px; border-bottom:3px solid; border-right:3px solid; border-radius:0 0 6px 0; }
-
-  .scan-line{
-    position:absolute; left:12px; right:12px; height:2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    top:12px; z-index:4; opacity:0;
-  }
-  .scan-frame.active .scan-line{
-    opacity:1; animation: sweep 2.2s ease-in-out infinite;
-  }
-  @keyframes sweep{
-    0%{ top:14%; opacity:0; }
-    10%{ opacity:1; }
-    50%{ top:86%; opacity:1; }
-    90%{ opacity:1; }
-    100%{ top:14%; opacity:0; }
-  }
-
-  .scan-toast{
-    position:absolute; left:50%; bottom:14px; transform:translate(-50%,140%);
-    background: var(--primary-dark); color:#fff; font-size:13px; font-weight:700;
-    padding:9px 16px; border-radius:999px; white-space:nowrap;
-    transition: transform .28s ease; z-index:6;
-    max-width:88%; overflow:hidden; text-overflow:ellipsis;
-  }
+  .scan-line{ position:absolute; left:12px; right:12px; height:2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); top:12px; z-index:4; opacity:0; }
+  .scan-frame.active .scan-line{ opacity:1; animation: sweep 2.2s ease-in-out infinite; }
+  @keyframes sweep{ 0%{ top:14%; opacity:0; } 10%{ opacity:1; } 50%{ top:86%; opacity:1; } 90%{ opacity:1; } 100%{ top:14%; opacity:0; } }
+  .scan-toast{ position:absolute; left:50%; bottom:14px; transform:translate(-50%,140%); background: var(--primary-dark); color:#fff; font-size:13px; font-weight:700; padding:9px 16px; border-radius:999px; white-space:nowrap; transition: transform .28s ease; z-index:6; max-width:88%; overflow:hidden; text-overflow:ellipsis; }
   .scan-toast.show{ transform:translate(-50%,0); }
-
   .scan-actions{ display:flex; gap:8px; margin-top:12px; }
-  .btn-camera{
-    flex:1; padding:11px; border-radius:10px; border:1px solid var(--line);
-    background: var(--surface); color: var(--ink); font-family:inherit;
-    font-weight:700; font-size:13.5px; cursor:pointer;
-  }
+  .btn-camera{ flex:1; padding:11px; border-radius:10px; border:1px solid var(--line); background: var(--surface); color: var(--ink); font-family:inherit; font-weight:700; font-size:13.5px; cursor:pointer; }
   .btn-camera.stop{ color: var(--danger); border-color:#EAD3CF; }
-
-  /* ---------- Manual entry ---------- */
-  .manual-entry{
-    display:flex; gap:8px; margin-top:12px;
-  }
-  .manual-entry input{
-    flex:1; padding:12px 14px; border-radius:10px; border:1px solid var(--line);
-    font-family:'Space Mono', monospace; font-size:14px; background: var(--surface);
-    color: var(--ink); min-width:0;
-  }
+  .manual-entry{ display:flex; gap:8px; margin-top:12px; }
+  .manual-entry input{ flex:1; padding:12px 14px; border-radius:10px; border:1px solid var(--line); font-family:'Space Mono', monospace; font-size:14px; background: var(--surface); color: var(--ink); min-width:0; }
   .manual-entry input:focus{ outline:none; border-color: var(--primary); }
-  .manual-entry button{
-    padding:0 18px; border-radius:10px; border:none; background: var(--primary);
-    color:#fff; font-family:'Manrope',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer;
-  }
+  .manual-entry button{ padding:0 18px; border-radius:10px; border:none; background: var(--primary); color:#fff; font-family:'Manrope',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer; }
   .manual-entry button:active{ background: var(--primary-dark); }
-
   .hint{ font-size:11.5px; color: var(--ink-soft); margin: 8px 2px 0; line-height:1.5; }
-
-  /* ---------- Cart ---------- */
   .cart-section{ flex:1; padding: 20px 18px 140px; }
-  .cart-head{
-    display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px;
-  }
+  .cart-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
   .cart-head h2{ margin:0; font-size:15px; font-weight:800; }
   .cart-head span{ font-size:12.5px; color: var(--ink-soft); font-weight:600; }
-
   .cart-list{ display:flex; flex-direction:column; gap:8px; }
-
-  .cart-empty{
-    padding: 44px 20px; text-align:center; color: var(--ink-soft);
-    background: var(--surface); border:1px dashed var(--line); border-radius: var(--radius);
-    font-size:13.5px; line-height:1.6;
-  }
+  .cart-empty{ padding: 44px 20px; text-align:center; color: var(--ink-soft); background: var(--surface); border:1px dashed var(--line); border-radius: var(--radius); font-size:13.5px; line-height:1.6; }
   .cart-empty strong{ display:block; color: var(--ink); font-size:14.5px; margin-bottom:4px; }
-
-  .cart-item{
-    background: var(--surface); border:1px solid var(--line); border-radius:12px;
-    padding:12px 12px 12px 14px; display:flex; align-items:center; gap:10px;
-    animation: item-in .22s ease;
-  }
+  .cart-item{ background: var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 12px 12px 14px; display:flex; align-items:center; gap:10px; animation: item-in .22s ease; }
   @keyframes item-in{ from{ opacity:0; transform:translateY(4px);} to{ opacity:1; transform:none; } }
-
   .item-info{ flex:1; min-width:0; }
-  .item-info .name{ font-size:13.5px; font-weight:700; line-height:1.3;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .item-info .name{ font-size:13.5px; font-weight:700; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .item-info .unit{ font-family:'Space Mono', monospace; font-size:11.5px; color: var(--ink-soft); margin-top:3px; }
-
   .qty-stepper{ display:flex; align-items:center; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
-  .qty-stepper button{
-    width:26px; height:26px; border:none; background: var(--surface-2); color: var(--ink);
-    font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  }
+  .qty-stepper button{ width:26px; height:26px; border:none; background: var(--surface-2); color: var(--ink); font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .qty-stepper span{ min-width:22px; text-align:center; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; }
-
   .line-total{ font-family:'Space Mono', monospace; font-size:13.5px; font-weight:700; min-width:70px; text-align:right; }
-
-  .remove-btn{
-    width:26px; height:26px; border:none; background:transparent; color: var(--ink-soft);
-    cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:6px;
-  }
+  .remove-btn{ width:26px; height:26px; border:none; background:transparent; color: var(--ink-soft); cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:6px; }
   .remove-btn:active{ background:#F3E4E2; color: var(--danger); }
-
-  /* ---------- Bottom summary bar ---------- */
-  .summary-bar{
-    position:fixed; left:50%; transform:translateX(-50%); bottom:0;
-    width:100%; max-width:480px; background: var(--surface);
-    border-top:1px solid var(--line); padding:14px 18px calc(16px + env(safe-area-inset-bottom));
-    box-shadow: 0 -8px 24px rgba(27,36,32,0.06);
-  }
+  .summary-bar{ position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:480px; background: var(--surface); border-top:1px solid var(--line); padding:14px 18px calc(16px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 24px rgba(27,36,32,0.06); }
   .summary-row{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:12px; }
   .summary-row .label{ font-size:12.5px; color: var(--ink-soft); font-weight:700; }
   .summary-row .count{ font-size:12px; color: var(--ink-soft); font-weight:600; margin-top:2px;}
   .summary-row .total{ font-family:'Space Mono', monospace; font-size:24px; font-weight:700; letter-spacing:-0.02em; }
-
-  .pay-btn{
-    width:100%; padding:15px; border:none; border-radius:12px; background: var(--accent);
-    color: #2B1B04; font-family:'Manrope',sans-serif; font-weight:800; font-size:15px;
-    cursor:pointer; letter-spacing:-0.01em;
-  }
+  .pay-btn{ width:100%; padding:15px; border:none; border-radius:12px; background: var(--accent); color: #2B1B04; font-family:'Manrope',sans-serif; font-weight:800; font-size:15px; cursor:pointer; letter-spacing:-0.01em; }
   .pay-btn:disabled{ background:#E4E2D8; color: var(--ink-soft); cursor:not-allowed; }
   .pay-btn:not(:disabled):active{ background: var(--accent-dark); }
 </style>
@@ -212,9 +82,7 @@
       <h1>Kasir Pintar</h1>
       <span>Toko Tiara</span>
     </div>
-    <div class="status-dot off" id="statusDot">
-      <i></i><span id="statusText">Kamera nonaktif</span>
-    </div>
+    <div class="status-dot off" id="statusDot"><i></i><span id="statusText">Kamera nonaktif</span></div>
   </header>
 
   <section class="scan-section">
@@ -226,44 +94,34 @@
         </svg>
         <span>Tekan "Mulai Scan" untuk mengaktifkan kamera</span>
       </div>
-      <div class="corner tl"></div>
-      <div class="corner tr"></div>
-      <div class="corner bl"></div>
-      <div class="corner br"></div>
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
       <div class="scan-line"></div>
       <div class="scan-toast" id="scanToast"></div>
     </div>
-
     <div class="scan-actions">
       <button class="btn-camera" id="toggleScanBtn">Mulai Scan</button>
     </div>
-
     <div class="manual-entry">
       <input type="text" id="manualInput" placeholder="Atau ketik barcode manual…" inputmode="numeric">
       <button id="manualAddBtn">Tambah</button>
     </div>
-    <p class="hint">Coba kode contoh: 8992388123456 (Indomie Goreng) · 8998866123457 (Teh Botol Sosro)</p>
   </section>
 
   <section class="cart-section">
     <div class="cart-head">
-      <h2>Keranjang Belanja</h2>
-      <span id="itemCountLabel">0 produk</span>
+      <h2>Keranjang Belanja</h2><span id="itemCountLabel">0 produk</span>
     </div>
     <div class="cart-list" id="cartList">
       <div class="cart-empty" id="cartEmpty">
         <strong>Keranjang masih kosong</strong>
-        Pindai barcode produk pertama, atau masukkan kode secara manual di atas.
+        Pindai barcode produk pertama, atau masukkan kode manual.
       </div>
     </div>
   </section>
 
   <div class="summary-bar">
     <div class="summary-row">
-      <div>
-        <div class="label">Total Belanja</div>
-        <div class="count" id="totalQtyLabel">0 item</div>
-      </div>
+      <div><div class="label">Total Belanja</div><div class="count" id="totalQtyLabel">0 item</div></div>
       <div class="total" id="totalPrice">Rp0</div>
     </div>
     <button class="pay-btn" id="payBtn" disabled>Bayar Sekarang</button>
@@ -275,117 +133,88 @@
 (function(){
   "use strict";
 
- 
-// PASTE URL BARU KAMU DI BAWAH SINI! JANGAN SAMPAI TANDA KUTIPNYA HILANG!
+  // URL UTAMA (Udah Pipo pasangin link milikmu langsung, ga usah diganti-ganti lagi!)
   const RAW_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzttlAkK0xJ8in6CUF6HZViifEycS0PANbK-veo58PPe5jcg0D8llJhvVLCjiTHST3bXA/exec";
-  
-  // Ini otomatis ngasih topeng CORS buat narik database
-  const PROXY_URL = "https://corsproxy.io/?" + encodeURIComponent(RAW_SCRIPT_URL);
-  
-  // ---------- State ----------
-  let cart = {};
-  let scanning = false;
-  let lastScanCode = null;
-  let lastScanTime = 0;
-  let html5QrCode = null;
 
-  // ---------- DOM refs ----------
-  const cartList        = document.getElementById('cartList');
-  const cartEmpty       = document.getElementById('cartEmpty');
-  const itemCountLabel  = document.getElementById('itemCountLabel');
-  const totalQtyLabel   = document.getElementById('totalQtyLabel');
-  const totalPriceEl    = document.getElementById('totalPrice');
-  const payBtn          = document.getElementById('payBtn');
-  const manualInput     = document.getElementById('manualInput');
-  const manualAddBtn    = document.getElementById('manualAddBtn');
-  const toggleScanBtn   = document.getElementById('toggleScanBtn');
-  const scanFrame       = document.getElementById('scanFrame');
-  const scanPlaceholder = document.getElementById('scanPlaceholder');
-  const scanToast       = document.getElementById('scanToast');
-  const statusDot       = document.getElementById('statusDot');
-  const statusText      = document.getElementById('statusText');
+  let cart = {}; let scanning = false; let lastScanCode = null; let lastScanTime = 0; let html5QrCode = null;
 
-  // ---------- Format Rupiah ----------
-  function formatRupiah(n){
-    return 'Rp' + n.toLocaleString('id-ID');
+  const cartList = document.getElementById('cartList'); const cartEmpty = document.getElementById('cartEmpty');
+  const itemCountLabel = document.getElementById('itemCountLabel'); const totalQtyLabel = document.getElementById('totalQtyLabel');
+  const totalPriceEl = document.getElementById('totalPrice'); const payBtn = document.getElementById('payBtn');
+  const manualInput = document.getElementById('manualInput'); const manualAddBtn = document.getElementById('manualAddBtn');
+  const toggleScanBtn = document.getElementById('toggleScanBtn'); const scanFrame = document.getElementById('scanFrame');
+  const scanPlaceholder = document.getElementById('scanPlaceholder'); const scanToast = document.getElementById('scanToast');
+  const statusDot = document.getElementById('statusDot'); const statusText = document.getElementById('statusText');
+
+  function formatRupiah(n){ return 'Rp' + n.toLocaleString('id-ID'); }
+
+  // FUNGSI SUPER: Auto-Save pakai Trik Anti-Cache & CORS Proxy!
+  function simpanKeSheets(barcode, nama, harga) {
+    const targetUrl = RAW_SCRIPT_URL + `?action=add&barcode=${barcode}&nama=${encodeURIComponent(nama)}&harga=${harga}&t=${Date.now()}`;
+    const saveUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+    fetch(saveUrl).catch(err => console.log("Gagal simpan:", err));
   }
 
-  // ---------- API Open Food Facts & Google Sheets Logic ----------
   async function addProductToCart(barcode) {
-    showScanToast(`🔍 Memproses ${barcode}...`);
+    showScanToast(`🔍 Mengecek ${barcode}...`);
     
     let catalogSheets = {};
-
-    // 1. CEK GOOGLE SHEETS DULUAN
     try {
-      const resSheets = await fetch(SCRIPT_URL);
+      // Trik Anti-Cache: Tambahkan 't=waktu_sekarang' biar web selalu narik data paling FRESH
+      const fetchUrl = "https://corsproxy.io/?" + encodeURIComponent(RAW_SCRIPT_URL + "?t=" + Date.now());
+      const resSheets = await fetch(fetchUrl);
       catalogSheets = await resSheets.json();
-    } catch (err) {
-      console.warn("Gagal baca Sheets, lanjut ke internet...", err);
-    }
+    } catch (err) { console.warn("Lanjut internet...", err); }
     
-    // Kalau ketemu di Sheets, langsung masuk keranjang dan STOP prosesnya
+    // 1. KETEMU DI GUDANG
     if (catalogSheets && catalogSheets[barcode]) {
       const p = catalogSheets[barcode];
       insertToCart(barcode, p.name, p.price);
-      showScanToast(`✓ ${p.name} (Gudang Toko)`);
+      showScanToast(`✓ ${p.name} (Gudang)`);
       return; 
     }
 
-    // 2. KALAU GAK ADA DI SHEETS, CARI DI INTERNET (OPEN FOOD FACTS)
+    // 2. CARI DI INTERNET & AUTO-SAVE
     try {
       const resApi = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
       const dataApi = await resApi.json();
 
       if (dataApi.status === 1 && dataApi.product) {
         let namaProduk = dataApi.product.product_name || "Produk Global";
-        let hargaStr = window.prompt(`Ketemu di Internet: "${namaProduk}"\nMasukkan harga jual toko (angka saja):`);
+        let hargaStr = window.prompt(`✨ BARANG BARU (Internet): "${namaProduk}"\nMau dijual harga berapa? (Ketik Angka)`);
         
         if (hargaStr) {
           let harga = parseInt(hargaStr, 10);
           if (!isNaN(harga) && harga > 0) {
             insertToCart(barcode, namaProduk, harga);
-            showScanToast(`✓ ${namaProduk} (Internet)`);
-            return; // Berhasil masuk dari internet, STOP!
+            showScanToast(`✓ ${namaProduk} Tersimpan!`);
+            simpanKeSheets(barcode, namaProduk, harga); // OTOMATIS SIMPAN
+            return;
           }
         }
         showScanToast('Dibatalkan');
         return;
       }
-    } catch (err) {
-      console.warn("Gagal ngecek internet, lanjut mode manual...", err);
-    }
+    } catch (err) { console.warn("Lanjut manual...", err); }
 
-    // 3. KALAU DUA-DUANYA KOSONG ATAU ERROR, MUNCUL INPUT MANUAL
-    let namaManual = window.prompt(`Barcode ${barcode} belum terdaftar.\nMasukkan nama produk baru:`);
-    if (!namaManual) {
-      showScanToast('Dibatalkan');
-      return;
-    }
+    // 3. INPUT MANUAL & AUTO-SAVE
+    let namaManual = window.prompt(`❌ Barcode ${barcode} ga ada di internet.\nMasukkan nama barang:`);
+    if (!namaManual) { showScanToast('Dibatalkan'); return; }
     
-    let hargaManualStr = window.prompt(`Masukkan harga untuk "${namaManual}" (angka saja):`);
-    if (!hargaManualStr) {
-       showScanToast('Dibatalkan');
-       return;
-    }
+    let hargaManualStr = window.prompt(`Berapa harga jual untuk "${namaManual}"?`);
+    if (!hargaManualStr) { showScanToast('Dibatalkan'); return; }
     
     let hargaManual = parseInt(hargaManualStr, 10);
-    if (isNaN(hargaManual) || hargaManual <= 0) {
-      showScanToast('Harga tidak valid');
-      return;
-    }
+    if (isNaN(hargaManual) || hargaManual <= 0) { showScanToast('Harga tidak valid'); return; }
 
     insertToCart(barcode, namaManual, hargaManual);
-    showScanToast(`✓ ${namaManual} (Manual)`);
+    showScanToast(`✓ ${namaManual} Tersimpan!`);
+    simpanKeSheets(barcode, namaManual, hargaManual); // OTOMATIS SIMPAN
   }
 
-  // ---------- Helper Tambah ke Keranjang ----------
   function insertToCart(barcode, name, price) {
-    if (cart[barcode]) {
-      cart[barcode].qty += 1;
-    } else {
-      cart[barcode] = { name, price, qty: 1 };
-    }
+    if (cart[barcode]) cart[barcode].qty += 1;
+    else cart[barcode] = { name, price, qty: 1 };
     renderCart();
   }
 
@@ -395,155 +224,54 @@
     if(cart[barcode].qty <= 0) delete cart[barcode];
     renderCart();
   }
-
-  function removeItem(barcode){
-    delete cart[barcode];
-    renderCart();
-  }
+  function removeItem(barcode){ delete cart[barcode]; renderCart(); }
 
   function renderCart(){
     const barcodes = Object.keys(cart);
-
     cartEmpty.style.display = barcodes.length === 0 ? 'block' : 'none';
     cartList.querySelectorAll('.cart-item').forEach(el => el.remove());
-
     let totalQty = 0, totalPrice = 0;
-
     barcodes.forEach(code => {
-      const item = cart[code];
-      totalQty += item.qty;
-      totalPrice += item.qty * item.price;
-
-      const row = document.createElement('div');
-      row.className = 'cart-item';
-      row.innerHTML = `
-        <div class="item-info">
-          <div class="name">${escapeHtml(item.name)}</div>
-          <div class="unit">${formatRupiah(item.price)} / pcs</div>
-        </div>
-        <div class="qty-stepper">
-          <button data-action="dec" aria-label="Kurangi">−</button>
-          <span>${item.qty}</span>
-          <button data-action="inc" aria-label="Tambah">+</button>
-        </div>
-        <div class="line-total">${formatRupiah(item.qty * item.price)}</div>
-        <button class="remove-btn" data-action="remove" aria-label="Hapus produk">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 6"/>
-          </svg>
-        </button>`;
-
+      const item = cart[code]; totalQty += item.qty; totalPrice += item.qty * item.price;
+      const row = document.createElement('div'); row.className = 'cart-item';
+      row.innerHTML = `<div class="item-info"><div class="name">${escapeHtml(item.name)}</div><div class="unit">${formatRupiah(item.price)} / pcs</div></div><div class="qty-stepper"><button data-action="dec">−</button><span>${item.qty}</span><button data-action="inc">+</button></div><div class="line-total">${formatRupiah(item.qty * item.price)}</div><button class="remove-btn" data-action="remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 6"/></svg></button>`;
       row.querySelector('[data-action="dec"]').addEventListener('click', () => changeQty(code, -1));
       row.querySelector('[data-action="inc"]').addEventListener('click', () => changeQty(code, 1));
       row.querySelector('[data-action="remove"]').addEventListener('click', () => removeItem(code));
-
       cartList.appendChild(row);
     });
-
-    itemCountLabel.textContent = `${barcodes.length} produk`;
-    totalQtyLabel.textContent = `${totalQty} item`;
-    totalPriceEl.textContent = formatRupiah(totalPrice);
-    payBtn.disabled = totalQty === 0;
+    itemCountLabel.textContent = `${barcodes.length} produk`; totalQtyLabel.textContent = `${totalQty} item`; totalPriceEl.textContent = formatRupiah(totalPrice); payBtn.disabled = totalQty === 0;
   }
+  function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
-  function escapeHtml(str){
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  // ---------- Scan feedback toast ----------
   let toastTimer = null;
-  function showScanToast(message){
-    scanToast.textContent = message;
-    scanToast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => scanToast.classList.remove('show'), 1600);
-  }
+  function showScanToast(message){ scanToast.textContent = message; scanToast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => scanToast.classList.remove('show'), 1600); }
 
-  // ---------- Manual entry ----------
-  manualAddBtn.addEventListener('click', () => {
-    const code = manualInput.value.trim();
-    if(!code) return;
-    addProductToCart(code);
-    manualInput.value = '';
-    manualInput.focus();
-  });
-  manualInput.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') manualAddBtn.click();
-  });
+  manualAddBtn.addEventListener('click', () => { const code = manualInput.value.trim(); if(!code) return; addProductToCart(code); manualInput.value = ''; manualInput.focus(); });
+  manualInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') manualAddBtn.click(); });
 
-  // ---------- Camera / Html5Qrcode ----------
   function onScanSuccess(decodedText){
     const now = Date.now();
     if(decodedText === lastScanCode && now - lastScanTime < 1800) return;
-    lastScanCode = decodedText;
-    lastScanTime = now;
-    addProductToCart(decodedText);
+    lastScanCode = decodedText; lastScanTime = now; addProductToCart(decodedText);
   }
+  function setStatus(on, text){ statusDot.classList.toggle('on', on); statusDot.classList.toggle('off', !on); statusText.textContent = text; }
 
-  function setStatus(on, text){
-    statusDot.classList.toggle('on', on);
-    statusDot.classList.toggle('off', !on);
-    statusText.textContent = text;
-  }
-
-  toggleScanBtn.addEventListener('click', async () => {
-    if(scanning){
-      stopScanning();
-      return;
-    }
-    startScanning();
-  });
-
+  toggleScanBtn.addEventListener('click', async () => { if(scanning){ stopScanning(); return; } startScanning(); });
   async function startScanning(){
-    if(typeof Html5Qrcode === 'undefined'){
-      showScanToast('Library scanner gagal dimuat (perlu koneksi internet)');
-      return;
-    }
+    if(typeof Html5Qrcode === 'undefined'){ showScanToast('Library scanner gagal dimuat'); return; }
     try{
       html5QrCode = new Html5Qrcode("reader");
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 220, height: 220 } },
-        onScanSuccess
-      );
-      scanning = true;
-      scanPlaceholder.style.display = 'none';
-      scanFrame.classList.add('active');
-      toggleScanBtn.textContent = 'Hentikan Scan';
-      toggleScanBtn.classList.add('stop');
-      setStatus(true, 'Kamera aktif');
-    } catch(err){
-      console.error(err);
-      setStatus(false, 'Akses kamera ditolak/gagal');
-      showScanToast('Tidak bisa akses kamera — gunakan input manual');
-    }
+      await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } }, onScanSuccess);
+      scanning = true; scanPlaceholder.style.display = 'none'; scanFrame.classList.add('active'); toggleScanBtn.textContent = 'Hentikan Scan'; toggleScanBtn.classList.add('stop'); setStatus(true, 'Kamera aktif');
+    } catch(err){ console.error(err); setStatus(false, 'Akses kamera ditolak'); showScanToast('Gunakan input manual'); }
   }
+  async function stopScanning(){ if(html5QrCode){ try{ await html5QrCode.stop(); await html5QrCode.clear(); }catch(e){} } scanning = false; scanPlaceholder.style.display = 'flex'; scanFrame.classList.remove('active'); toggleScanBtn.textContent = 'Mulai Scan'; toggleScanBtn.classList.remove('stop'); setStatus(false, 'Kamera nonaktif'); }
 
-  async function stopScanning(){
-    if(html5QrCode){
-      try{ await html5QrCode.stop(); await html5QrCode.clear(); }catch(e){ /* noop */ }
-    }
-    scanning = false;
-    scanPlaceholder.style.display = 'flex';
-    scanFrame.classList.remove('active');
-    toggleScanBtn.textContent = 'Mulai Scan';
-    toggleScanBtn.classList.remove('stop');
-    setStatus(false, 'Kamera nonaktif');
-  }
-
-  // ---------- Pembayaran ----------
   payBtn.addEventListener('click', () => {
     const total = totalPriceEl.textContent;
-    if(window.confirm(`Selesaikan transaksi sebesar ${total}?`)){
-      cart = {};
-      renderCart();
-      showScanToast('✓ Transaksi selesai');
-    }
+    if(window.confirm(`Selesaikan transaksi sebesar ${total}?`)){ cart = {}; renderCart(); showScanToast('✓ Transaksi selesai'); }
   });
-
-  // ---------- Init ----------
   renderCart();
 })();
 </script>
