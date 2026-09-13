@@ -275,9 +275,13 @@
 (function(){
   "use strict";
 
-  // URL Database Google Sheets pakai Topeng (CORS Proxy) biar nggak diblokir Browser!
-  const SCRIPT_URL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbxsiVfRrd2WAfugIAuPSV7VzpJn2huO_A2Lk2M7LxbW07Cy7YakBKbqHgMh0UNLa_atAg/exec");
-
+ 
+// PASTE URL BARU KAMU DI BAWAH SINI! JANGAN SAMPAI TANDA KUTIPNYA HILANG!
+  const RAW_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzttlAkK0xJ8in6CUF6HZViifEycS0PANbK-veo58PPe5jcg0D8llJhvVLCjiTHST3bXA/exec";
+  
+  // Ini otomatis ngasih topeng CORS buat narik database
+  const PROXY_URL = "https://corsproxy.io/?" + encodeURIComponent(RAW_SCRIPT_URL);
+  
   // ---------- State ----------
   let cart = {};
   let scanning = false;
